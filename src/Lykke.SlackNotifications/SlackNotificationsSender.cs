@@ -11,11 +11,11 @@ namespace Lykke.SlackNotifications
         public string Message { get; set; }
     }
 
-    public class SlackNotificationSender : ISlackNotificationsSender
+    public class SlackNotificationsSender : ISlackNotificationsSender
     {
         private readonly IQueueExt _queue;
 
-        public SlackNotificationSender(IQueueExt queue)
+        public SlackNotificationsSender(IQueueExt queue)
         {
             _queue = queue;
         }
@@ -35,7 +35,7 @@ namespace Lykke.SlackNotifications
     }
 
 
-    public class SlackNotificationSenderViaAzureQueue : SlackNotificationSender
+    public class SlackNotificationSenderViaAzureQueue : SlackNotificationsSender
     {
         public SlackNotificationSenderViaAzureQueue(SlackNotificationsSettings settings) 
             : base(new AzureQueueExt(settings.ConnectionString, settings.QueueName))

@@ -7,7 +7,7 @@ namespace Lykke.SlackNotifications
         Task SendAsync(string type, string sender, string message);
     }
 
-    public static class SlackNotificationSenderExt
+    public static class SlackNotificationsSenderExt
     {
         public static Task SendInfoAsync(this ISlackNotificationsSender src, string sender, string message)
         {
