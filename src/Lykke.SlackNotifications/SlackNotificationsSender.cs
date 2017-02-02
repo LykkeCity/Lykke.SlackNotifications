@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using AzureStorage.Queue;
+using Common;
 
 namespace Lykke.SlackNotifications
 {
@@ -13,9 +13,9 @@ namespace Lykke.SlackNotifications
 
     public class SlackNotificationsSender : ISlackNotificationsSender
     {
-        private readonly IQueueExt _queue;
+        private readonly IMessageProducer<SlackMessageQueueEntity> _queue;
 
-        public SlackNotificationsSender(IQueueExt queue)
+        public SlackNotificationsSender(IMessageProducer<SlackMessageQueueEntity> queue)
         {
             _queue = queue;
         }
@@ -30,18 +30,8 @@ namespace Lykke.SlackNotifications
                 Sender = sender
             };
 
-            await _queue.PutMessageAsync(slackMessage);
+            await _queue.ProduceAsync(slackMessage);
         }
-    }
-
-
-    public class SlackNotificationSenderViaAzureQueue : SlackNotificationsSender
-    {
-        public SlackNotificationSenderViaAzureQueue(SlackNotificationsSettings settings) 
-            : base(new AzureQueueExt(settings.ConnectionString, settings.QueueName))
-        {
-        }
-
     }
 
 }
