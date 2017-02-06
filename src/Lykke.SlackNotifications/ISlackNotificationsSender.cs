@@ -9,19 +9,19 @@ namespace Lykke.SlackNotifications
 
     public static class SlackNotificationsSenderExt
     {
-        public static Task SendInfoAsync(this ISlackNotificationsSender src, string sender, string message)
+        public static Task SendInfoAsync(this ISlackNotificationsSender src, string message)
         {
-            return src.SendAsync("Info", sender, message);
+            return src.SendAsync("Info", ":exclamation:", message);
         }
 
-        public static Task SendErrorAsync(this ISlackNotificationsSender src, string sender, string message)
+        public static Task SendErrorAsync(this ISlackNotificationsSender src, string message)
         {
-            return src.SendAsync("Errors", sender, message);
+            return src.SendAsync("Errors", ":exclamation:", message);
         }
 
-        public static Task SendWarningAsync(this ISlackNotificationsSender src, string sender, string message)
+        public static Task SendWarningAsync(this ISlackNotificationsSender src, string message)
         {
-            return src.SendAsync("Warning", sender, message);
+            return src.SendAsync("Warning", ":warning:", message);
         }
     }
 
