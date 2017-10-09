@@ -18,6 +18,10 @@ namespace Lykke.SlackNotifications
         {
             return src.SendAsync("Warning", sender ?? ":warning:", message);
         }
-    }
 
+        public static Task SendMonitorAsync(this ISlackNotificationsSender src, string message, string sender = null)
+        {
+            return src.SendAsync("Monitor", sender ?? ":information_source:", message);
+        }
+    }
 }
