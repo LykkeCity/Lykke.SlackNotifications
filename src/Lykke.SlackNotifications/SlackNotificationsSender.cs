@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Common;
 
 namespace Lykke.SlackNotifications
@@ -11,13 +12,15 @@ namespace Lykke.SlackNotifications
         public string Message { get; set; }
     }
 
-    public class SlackNotificationsSender : ISlackNotificationsSender
+    public class SlackNotificationsSender : ISlackNotificationsSender, IDisposable
     {
         private readonly IMessageProducer<SlackMessageQueueEntity> _queue;
+        private readonly bool _ownQueue;
 
-        public SlackNotificationsSender(IMessageProducer<SlackMessageQueueEntity> queue)
+        public SlackNotificationsSender(IMessageProducer<SlackMessageQueueEntity> queue, bool ownQueue = false)
         {
             _queue = queue;
+            _ownQueue = ownQueue;
         }
 
 
@@ -31,6 +34,16 @@ namespace Lykke.SlackNotifications
             };
 
             await _queue.ProduceAsync(slackMessage);
+        }
+
+        public void Dispose()
+        {
+            if (_ownQueue)
+            {
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                // There is AzureQueuePublisher<T> in the Lykke.AzureQueueIntegration nuget
+                (_queue as IDisposable)?.Dispose();
+            }
         }
     }
 
