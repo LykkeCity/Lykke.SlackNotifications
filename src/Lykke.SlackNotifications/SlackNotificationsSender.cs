@@ -4,7 +4,6 @@ using Common;
 
 namespace Lykke.SlackNotifications
 {
-
     public class SlackMessageQueueEntity
     {
         public string Type { get; set; }
@@ -14,6 +13,8 @@ namespace Lykke.SlackNotifications
 
     public class SlackNotificationsSender : ISlackNotificationsSender, IDisposable
     {
+        private const string _timestampFormat = "yyyy-MM-dd HH:mm:ss";
+
         private readonly IMessageProducer<SlackMessageQueueEntity> _queue;
         private readonly bool _ownQueue;
 
@@ -23,14 +24,13 @@ namespace Lykke.SlackNotifications
             _ownQueue = ownQueue;
         }
 
-
         public async Task SendAsync(string type, string sender, string message)
         {
             var slackMessage = new SlackMessageQueueEntity
             {
                 Type = type,
                 Message = message,
-                Sender = sender
+                Sender = $"[{DateTime.UtcNow.ToString(_timestampFormat)}] {sender}",
             };
 
             await _queue.ProduceAsync(slackMessage);
