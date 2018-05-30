@@ -13,7 +13,7 @@ namespace Lykke.SlackNotifications
 
     public class SlackNotificationsSender : ISlackNotificationsSender, IDisposable
     {
-        private const string _timestampFormat = "yyyy-MM-dd HH:mm:ss";
+        private const string TimestampFormat = "yyyy-MM-dd HH:mm:ss";
 
         private readonly IMessageProducer<SlackMessageQueueEntity> _queue;
         private readonly bool _ownQueue;
@@ -24,16 +24,21 @@ namespace Lykke.SlackNotifications
             _ownQueue = ownQueue;
         }
 
-        public async Task SendAsync(string type, string sender, string message)
+        public Task SendAsync(string type, string sender, string message)
+        {
+            return SendAsync(DateTime.UtcNow, type, sender, message);
+        }
+
+        public Task SendAsync(DateTime moment, string type, string sender, string message)
         {
             var slackMessage = new SlackMessageQueueEntity
             {
                 Type = type,
                 Message = message,
-                Sender = $"[{DateTime.UtcNow.ToString(_timestampFormat)}] {sender}",
+                Sender = $"[{moment.ToString(TimestampFormat)}] {sender}",
             };
 
-            await _queue.ProduceAsync(slackMessage);
+            return _queue.ProduceAsync(slackMessage);
         }
 
         public void Dispose()
